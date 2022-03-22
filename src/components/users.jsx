@@ -3,9 +3,8 @@ import api from "../api";
 
 
 const Users = () => {
-  const usersList = api.users.fetchAll()
-  const [user, setUsers] = useState(usersList)
-  console.log(user)
+  const users = api.users.fetchAll()
+  const [usersList, setUsers] = useState(users)
 
   const getHeadingClasses = () => {
     let classes = 'badge p-2 mt-1 fs-6 '
@@ -19,10 +18,23 @@ const Users = () => {
     return classes
   }
 
+  const handleUserChange = id => {
+    setUsers(prevState => prevState.filter(item => item._id !== id))
+  }
+
   const getHeading = () => {
     const qtyPeople = usersList.length
+
+    let arr = qtyPeople.toString().split('').reverse()
+    let peopleVariant = () => {
+      const checkLastNumber = arr[0] > 1 && arr[0] < 5
+      return (checkLastNumber && qtyPeople > 20) || (qtyPeople < 10 && checkLastNumber)
+      ? "человека"
+      : "человек"
+    }
+
     return usersList.length !== 0
-        ? ` ${qtyPeople} человек тусанет с тобой сегодня`
+        ? ` ${qtyPeople} ${peopleVariant()} тусанет с тобой сегодня`
         : 'Никто не тусанет с тобой сегодня'
   }
 
@@ -37,14 +49,6 @@ const Users = () => {
     ))
   }
 
-  const handleUserChange = id => {
-    // console.log(setUsers)
-    setUsers(prevState => {
-      console.log(prevState)
-      prevState.filter(item => item._id !== id)
-    })
-
-  }
 
   const renderUser = () => {
 
