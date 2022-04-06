@@ -1,14 +1,22 @@
-import React, {useState} from "react";
+import React from 'react'
+import PropTypes from 'prop-types'
 
-const Bookmark = props => {
+const Bookmark = (props) => {
+  const { bookmark, onChangeStatus } = props
 
-  const users = [props]
-
-  const handleBookmark = users.map(user => {
-    let classes = 'bi '
-    return classes += user.bookmark ?  'bi-bookmark-fill' : 'bi-bookmark'
-  })
-
-  return <i className={handleBookmark} onClick={()=>{props.onChangeStatus(props)}}></i>
+  return (
+    <i
+      className={bookmark ? 'bi bi-bookmark-fill' : 'bi bi-bookmark'}
+      onClick={() => {
+        onChangeStatus(props)
+      }}
+    ></i>
+  )
 }
+
+Bookmark.propTypes = {
+  bookmark: PropTypes.bool.isRequired,
+  onChangeStatus: PropTypes.func.isRequired
+}
+
 export default Bookmark

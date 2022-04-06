@@ -1,6 +1,13 @@
-import React, {useState} from "react";
+import React from 'react'
+import PropTypes from 'prop-types'
 
-const SearchStatus = props => {
- return <span className={props.onClassName()}>{props.onHeading()}</span>
+const SearchStatus = ({ onClassName, onHeading }) => {
+  return <span className={onClassName()}>{onHeading()}</span>
 }
+
+SearchStatus.propTypes = {
+  onClassName: PropTypes.func.isRequired,
+  onHeading: PropTypes.func.isRequired
+}
+
 export default SearchStatus
