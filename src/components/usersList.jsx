@@ -16,7 +16,7 @@ const UsersList = () => {
     setCurrentPage(pageIndex)
   }
 
-  const userCrop = paginate(users, currentPage, pageSize)
+  const userCrop = paginate(usersList, currentPage, pageSize)
 
   const getHeadingClasses = () => {
     let classes = 'badge p-2 mt-1 fs-6 '
