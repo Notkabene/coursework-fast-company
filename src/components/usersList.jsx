@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import PropTypes from 'prop-types'
 import User from './user'
 import SearchStatus from './searchStatus'
 import Pagination from './pagination'
@@ -6,13 +7,11 @@ import { paginate } from '../utils/paginate'
 import api from '../api'
 import GroupList from './groupList'
 
-const UsersList = () => {
-  const users = api.users.fetchAll()
-  const [usersList, setUsers] = useState(users)
+const UsersList = ({ usersList, setUsers }) => {
   const pageSize = 4
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedProf, setSelectedProf] = useState()
-  const [professions, setProfession] = useState(api.professions.fetchAll())
+  const [professions, setProfession] = useState()
 
   useEffect(() => {
     api.professions.fetchAll().then(data => setProfession(data))
@@ -29,11 +28,9 @@ const UsersList = () => {
   const handlePageChange = (pageIndex) => {
     setCurrentPage(pageIndex)
   }
-
   const filteredUsers = selectedProf
-    ? usersList.filter(user => user.profession === selectedProf)
+    ? usersList.filter(user => user.profession.name === selectedProf.name)
     : usersList
-
   const qtyPeople = filteredUsers.length
   const userCrop = paginate(filteredUsers, currentPage, pageSize)
 
@@ -91,7 +88,7 @@ const UsersList = () => {
     {<SearchStatus
       onClassName={getHeadingClasses}
       onHeading={getHeading}
-      {...users}
+      {...usersList}
     />}
     {qtyPeople !== 0 && (
       <div className='d-flex'>
@@ -150,4 +147,8 @@ const UsersList = () => {
   )
 }
 
+UsersList.propTypes = {
+  usersList: PropTypes.array,
+  setUsers: PropTypes.func
+}
 export default UsersList

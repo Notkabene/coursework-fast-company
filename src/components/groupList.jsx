@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 const GroupList = ({ items, valueProperty, contentPropety, onItemSelect, selectedItem }) => {
   return (
-  <ul className="list-group">
+  <ul className='list-group'>
     {Object.keys(items).map(item => (
       <li
         key={items[item][valueProperty]}
