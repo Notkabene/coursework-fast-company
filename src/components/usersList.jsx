@@ -28,15 +28,16 @@ const UsersList = ({ usersList, setUsers }) => {
   const handlePageChange = (pageIndex) => {
     setCurrentPage(pageIndex)
   }
+
   const filteredUsers = selectedProf
     ? usersList.filter(user => user.profession.name === selectedProf.name)
     : usersList
   const qtyPeople = filteredUsers.length
   const userCrop = paginate(filteredUsers, currentPage, pageSize)
-
   if (userCrop < 1 && currentPage !== 1) {
     setCurrentPage(currentPage - 1)
   }
+
   const getHeadingClasses = () => {
     let classes = 'badge p-2 m-3 fs-6 '
     classes += qtyPeople === 0 ? 'bg-warning' : 'bg-primary'
@@ -78,8 +79,15 @@ const UsersList = ({ usersList, setUsers }) => {
         : 'человек'
     }
 
-    return qtyPeople !== 0
-      ? ` ${qtyPeople} ${peopleVariant()} тусанет с тобой сегодня`
+    const getCategoryHeading = () => {
+      console.log(selectedProf)
+      return selectedProf
+        ? `с профессией ${selectedProf.name}`
+        : ''
+    }
+
+    return qtyPeople > 0
+      ? ` ${qtyPeople} ${peopleVariant()} ${getCategoryHeading()} тусанет с тобой сегодня`
       : 'Никто не тусанет с тобой сегодня'
   }
 
@@ -90,7 +98,7 @@ const UsersList = ({ usersList, setUsers }) => {
       onHeading={getHeading}
       {...usersList}
     />}
-    {qtyPeople !== 0 && (
+    {qtyPeople > 0 && (
       <div className='d-flex'>
 
         {professions && (
