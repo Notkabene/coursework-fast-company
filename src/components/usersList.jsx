@@ -80,7 +80,6 @@ const UsersList = ({ usersList, setUsers }) => {
     }
 
     const getCategoryHeading = () => {
-      console.log(selectedProf)
       return selectedProf
         ? `с профессией ${selectedProf.name}`
         : ''
@@ -88,7 +87,12 @@ const UsersList = ({ usersList, setUsers }) => {
 
     return qtyPeople > 0
       ? ` ${qtyPeople} ${peopleVariant()} ${getCategoryHeading()} тусанет с тобой сегодня`
-      : 'Никто не тусанет с тобой сегодня'
+      : `Никто ${getCategoryHeading()} не тусанет с тобой сегодня`
+  }
+  const getTest = () => {
+    return selectedProf && (qtyPeople === 0)
+      ? <button onClick={clearFilter} className=' d-block btn btn-secondary mt-2 ms-3'>Очистить</button>
+      : ''
   }
 
   return (
@@ -98,6 +102,7 @@ const UsersList = ({ usersList, setUsers }) => {
       onHeading={getHeading}
       {...usersList}
     />}
+    {getTest()}
     {qtyPeople > 0 && (
       <div className='d-flex'>
 
