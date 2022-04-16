@@ -1,25 +1,45 @@
-import React, { useState } from 'react'
-import api from '../api'
+import React, { useState, useEffect } from 'react'
+import PropTypes from 'prop-types'
 import User from './user'
 import SearchStatus from './searchStatus'
 import Pagination from './pagination'
 import { paginate } from '../utils/paginate'
+import api from '../api'
+import GroupList from './groupList'
 
-const UsersList = () => {
-  const users = api.users.fetchAll()
-  const [usersList, setUsers] = useState(users)
-  const qtyPeople = usersList.length
+const UsersList = ({ usersList, setUsers }) => {
   const pageSize = 4
   const [currentPage, setCurrentPage] = useState(1)
+  const [selectedProf, setSelectedProf] = useState()
+  const [professions, setProfession] = useState()
+
+  useEffect(() => {
+    api.professions.fetchAll().then(data => setProfession(data))
+  }, [])
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [selectedProf])
+
+  const handleProfessionSelect = (item) => {
+    setSelectedProf(item)
+  }
 
   const handlePageChange = (pageIndex) => {
     setCurrentPage(pageIndex)
   }
 
-  const userCrop = paginate(usersList, currentPage, pageSize)
+  const filteredUsers = selectedProf
+    ? usersList.filter(user => user.profession.name === selectedProf.name)
+    : usersList
+  const qtyPeople = filteredUsers.length
+  const userCrop = paginate(filteredUsers, currentPage, pageSize)
+  if (userCrop < 1 && currentPage !== 1) {
+    setCurrentPage(currentPage - 1)
+  }
 
   const getHeadingClasses = () => {
-    let classes = 'badge p-2 mt-1 fs-6 '
+    let classes = 'badge p-2 m-3 fs-6 '
     classes += qtyPeople === 0 ? 'bg-warning' : 'bg-primary'
     return classes
   }
@@ -45,6 +65,10 @@ const UsersList = () => {
     setUsers((prevState) => prevState.filter((item) => item._id !== id))
   }
 
+  const clearFilter = () => {
+    setSelectedProf()
+  }
+
   const getHeading = () => {
     const arr = qtyPeople.toString().split('').reverse()
     const peopleVariant = () => {
@@ -55,51 +79,89 @@ const UsersList = () => {
         : 'человек'
     }
 
-    return qtyPeople !== 0
-      ? ` ${qtyPeople} ${peopleVariant()} тусанет с тобой сегодня`
-      : 'Никто не тусанет с тобой сегодня'
+    const getCategoryHeading = () => {
+      return selectedProf
+        ? `с профессией ${selectedProf.name}`
+        : ''
+    }
+
+    return qtyPeople > 0
+      ? ` ${qtyPeople} ${peopleVariant()} ${getCategoryHeading()} тусанет с тобой сегодня`
+      : `Никто ${getCategoryHeading()} не тусанет с тобой сегодня`
+  }
+  const getTest = () => {
+    return selectedProf && (qtyPeople === 0)
+      ? <button onClick={clearFilter} className=' d-block btn btn-secondary mt-2 ms-3'>Очистить</button>
+      : ''
   }
 
   return (
-    qtyPeople !== 0 && (
-      <>
-        <SearchStatus
-          onClassName={getHeadingClasses}
-          onHeading={getHeading}
-          {...users}
-        />
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">Имя</th>
-              <th scope="col">Качества</th>
-              <th scope="col">Профессия</th>
-              <th scope="col">Встретился, раз</th>
-              <th scope="col">Оценка</th>
-              <th scope="col">Избранное</th>
-              <th scope="col"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {userCrop.map((user) => (
-              <User
-                key={user._id}
-                onUserChange={handleUserChange}
-                onChangeStatus={changeStatus}
-                {...user}
-              />
-            ))}
-          </tbody>
-        </table>
-        <Pagination
-          itemsCount={qtyPeople}
-          pageSize={pageSize}
-          currentPage={currentPage}
-          onPageChange={handlePageChange}
-        />
-      </>
-    )
+  <>
+    {<SearchStatus
+      onClassName={getHeadingClasses}
+      onHeading={getHeading}
+      {...usersList}
+    />}
+    {getTest()}
+    {qtyPeople > 0 && (
+      <div className='d-flex'>
+
+        {professions && (
+          <div className="d-flex flex-column flex-shrink-0 p-3">
+            <GroupList
+            selectedItem={selectedProf}
+            items={professions}
+            onItemSelect={handleProfessionSelect}
+            />
+            <button onClick={clearFilter} className='btn btn-secondary mt-2'>Очистить</button>
+          </div>
+        )}
+
+        <div className='d-flex flex-column'>
+
+          <table className="table">
+            <thead>
+              <tr>
+                <th scope="col">Имя</th>
+                <th scope="col">Качества</th>
+                <th scope="col">Профессия</th>
+                <th scope="col">Встретился, раз</th>
+                <th scope="col">Оценка</th>
+                <th scope="col">Избранное</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {userCrop.map((user) => (
+                <User
+                  key={user._id}
+                  onUserChange={handleUserChange}
+                  onChangeStatus={changeStatus}
+                  {...user}
+                />
+              ))}
+            </tbody>
+          </table>
+
+          <div className='d-flex justify-content-center'>
+            <Pagination
+              itemsCount={qtyPeople}
+              pageSize={pageSize}
+              currentPage={currentPage}
+              onPageChange={handlePageChange}
+            />
+          </div>
+
+        </div>
+
+      </div>
+    )}
+  </>
   )
 }
 
+UsersList.propTypes = {
+  usersList: PropTypes.array,
+  setUsers: PropTypes.func
+}
 export default UsersList
