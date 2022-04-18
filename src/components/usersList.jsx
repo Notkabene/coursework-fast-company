@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import User from './user'
 import SearchStatus from './searchStatus'
 import Pagination from './pagination'
 import { paginate } from '../utils/paginate'
 import api from '../api'
 import GroupList from './groupList'
+import UsersTable from './usersTable'
 
 const UsersList = ({ usersList, setUsers }) => {
   const pageSize = 4
@@ -44,15 +44,15 @@ const UsersList = ({ usersList, setUsers }) => {
     return classes
   }
 
-  const changeStatus = (item) => {
+  const changeStatus = (bookmark, _id) => {
     const updateStatus = usersList.map((user) => {
-      if (item.bookmark === true) {
-        if (user._id === item._id) {
+      if (bookmark === true) {
+        if (user._id === _id) {
           user.bookmark = false
         }
         return user
       } else {
-        if (user._id === item._id) {
+        if (user._id === _id) {
           user.bookmark = true
         }
         return user
@@ -119,29 +119,10 @@ const UsersList = ({ usersList, setUsers }) => {
 
         <div className='d-flex flex-column'>
 
-          <table className="table">
-            <thead>
-              <tr>
-                <th scope="col">Имя</th>
-                <th scope="col">Качества</th>
-                <th scope="col">Профессия</th>
-                <th scope="col">Встретился, раз</th>
-                <th scope="col">Оценка</th>
-                <th scope="col">Избранное</th>
-                <th scope="col"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {userCrop.map((user) => (
-                <User
-                  key={user._id}
-                  onUserChange={handleUserChange}
-                  onChangeStatus={changeStatus}
-                  {...user}
-                />
-              ))}
-            </tbody>
-          </table>
+          <UsersTable users={userCrop}
+            onUserChange={handleUserChange}
+            onChangeStatus={changeStatus}
+          />
 
           <div className='d-flex justify-content-center'>
             <Pagination
