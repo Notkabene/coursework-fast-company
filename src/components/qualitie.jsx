@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 const Quality = ({ color, name }) => {
   return (
-    <span className={'badge m-1 bg-' + color}>
+    <span className={'d-block badge m-1 bg-' + color}>
       {name}
     </span>
   )
