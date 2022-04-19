@@ -1,5 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 
 const Loader = () => {
   return <div id='loader' className='ms-5 mt-5'>
@@ -15,7 +14,3 @@ const Loader = () => {
         </div>
 }
 export default Loader
-
-Loader.propTypes = {
-  onLoader: PropTypes.func.isRequired
-}
