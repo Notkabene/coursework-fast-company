@@ -1,36 +1,39 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import User from './user'
+import TableHeader from './tableHeader'
 
-const UsersTable = ({ users, ...rest }) => {
+const UsersTable = ({ users, onSort, selectedSort, ...rest }) => {
+  const columns = {
+    name: { iter: 'name', name: 'Имя' },
+    qualities: { name: 'Качества' },
+    professions: { iter: 'profession.name', name: 'Профессия' },
+    completedMeetings: { iter: 'completedMeetings', name: 'Встретился, раз' },
+    rate: { iter: 'rate', name: 'Оценка' },
+    bookmark: { iter: 'bookmark', name: 'Избранное' },
+    delete: {}
+  }
+
   return (
     <table className="table">
-            <thead>
-              <tr>
-                <th scope="col">Имя</th>
-                <th scope="col">Качества</th>
-                <th scope="col">Профессия</th>
-                <th scope="col">Встретился, раз</th>
-                <th scope="col">Оценка</th>
-                <th scope="col">Избранное</th>
-                <th scope="col"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((user) => (
-                <User
-                  key={user._id}
-                  { ...user }
-                  { ...rest }
-                />
-              ))}
-            </tbody>
-          </table>
+      <TableHeader { ...{ onSort, selectedSort, columns } }/>
+      <tbody>
+        {users.map((user) => (
+          <User
+            key={user._id}
+            { ...user }
+            { ...rest }
+          />
+        ))}
+      </tbody>
+    </table>
   )
 }
 
 UsersTable.propTypes = {
-  users: PropTypes.array.isRequired
+  users: PropTypes.array.isRequired,
+  onSort: PropTypes.func.isRequired,
+  selectedSort: PropTypes.object.isRequired
 }
 
 export default UsersTable

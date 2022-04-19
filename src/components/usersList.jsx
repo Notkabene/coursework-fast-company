@@ -6,12 +6,14 @@ import { paginate } from '../utils/paginate'
 import api from '../api'
 import GroupList from './groupList'
 import UsersTable from './usersTable'
+import _ from 'lodash'
 
 const UsersList = ({ usersList, setUsers }) => {
   const pageSize = 4
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedProf, setSelectedProf] = useState()
   const [professions, setProfession] = useState()
+  const [sortBy, setSortBy] = useState({ iter: 'name', order: 'asc' })
 
   useEffect(() => {
     api.professions.fetchAll().then(data => setProfession(data))
@@ -29,11 +31,19 @@ const UsersList = ({ usersList, setUsers }) => {
     setCurrentPage(pageIndex)
   }
 
+  const handleSort = (item) => {
+    setSortBy(item)
+  }
+
   const filteredUsers = selectedProf
     ? usersList.filter(user => user.profession.name === selectedProf.name)
     : usersList
+
   const qtyPeople = filteredUsers.length
-  const userCrop = paginate(filteredUsers, currentPage, pageSize)
+
+  const sortedUsers = _.orderBy(filteredUsers, [sortBy.iter], [sortBy.order])
+
+  const userCrop = paginate(sortedUsers, currentPage, pageSize)
   if (userCrop < 1 && currentPage !== 1) {
     setCurrentPage(currentPage - 1)
   }
@@ -89,6 +99,7 @@ const UsersList = ({ usersList, setUsers }) => {
       ? ` ${qtyPeople} ${peopleVariant()} ${getCategoryHeading()} тусанет с тобой сегодня`
       : `Никто ${getCategoryHeading()} не тусанет с тобой сегодня`
   }
+
   const getTest = () => {
     return selectedProf && (qtyPeople === 0)
       ? <button onClick={clearFilter} className=' d-block btn btn-secondary mt-2 ms-3'>Очистить</button>
@@ -122,6 +133,8 @@ const UsersList = ({ usersList, setUsers }) => {
           <UsersTable users={userCrop}
             onUserChange={handleUserChange}
             onChangeStatus={changeStatus}
+            onSort={handleSort}
+            selectedSort={sortBy}
           />
 
           <div className='d-flex justify-content-center'>
