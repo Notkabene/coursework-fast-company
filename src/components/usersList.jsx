@@ -20,11 +20,13 @@ const UsersList = () => {
   useEffect(() => {
     api.users
       .fetchAll()
-      .then((data) => setUsers(data))
+      .then(data => setUsers(data))
   }, [])
 
   useEffect(() => {
-    api.professions.fetchAll().then((data) => setProfession(data))
+    api.professions
+      .fetchAll()
+      .then(data => setProfession(data))
   }, [])
 
   useEffect(() => {
