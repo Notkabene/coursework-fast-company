@@ -7,34 +7,42 @@ import api from '../api'
 import GroupList from './groupList'
 import UsersTable from './usersTable'
 import Loader from '../utils/loader'
+import SearchField from './searchField'
 import _ from 'lodash'
 
 const UsersList = () => {
   const pageSize = 4
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedProf, setSelectedProf] = useState()
+  const [search, setSearch] = useState()
   const [professions, setProfession] = useState()
   const [sortBy, setSortBy] = useState({ iter: 'name', order: 'asc' })
   const [users, setUsers] = useState()
+  // const [value, setValue] = useState()
 
   useEffect(() => {
-    api.users
-      .fetchAll()
-      .then(data => setUsers(data))
+    api.users.fetchAll().then((data) => setUsers(data))
   }, [])
 
   useEffect(() => {
-    api.professions
-      .fetchAll()
-      .then(data => setProfession(data))
+    api.professions.fetchAll().then((data) => setProfession(data))
   }, [])
 
   useEffect(() => {
     setCurrentPage(1)
+    setSearch()
   }, [selectedProf])
+
+  useEffect(() => {
+    setSelectedProf()
+  }, [search])
 
   const handleProfessionSelect = (item) => {
     setSelectedProf(item)
+  }
+
+  const handleSearch = (item) => {
+    setSearch(item)
   }
 
   const handlePageChange = (pageIndex) => {
@@ -45,11 +53,24 @@ const UsersList = () => {
     setSortBy(item)
   }
 
+  const clearFilter = () => {
+    setSelectedProf()
+  }
+
   if (users) {
     const usersList = Object.values(users)
-    const filteredUsers = selectedProf
-      ? usersList.filter((user) => user.profession.name === selectedProf.name)
-      : usersList
+    let filteredUsers = usersList
+
+    if (selectedProf) {
+      filteredUsers = selectedProf
+        ? usersList.filter((user) => user.profession.name === selectedProf.name)
+        : usersList
+    } else if (search) {
+      filteredUsers = []
+      filteredUsers = search
+        ? usersList.filter((user) => user.name.toLowerCase().includes(search))
+        : usersList
+    }
 
     const qtyPeople = filteredUsers.length
 
@@ -87,10 +108,6 @@ const UsersList = () => {
       setUsers((prevState) => prevState.filter((item) => item._id !== id))
     }
 
-    const clearFilter = () => {
-      setSelectedProf()
-    }
-
     const getHeading = () => {
       const arr = qtyPeople.toString().split('').reverse()
       const peopleVariant = () => {
@@ -112,22 +129,30 @@ const UsersList = () => {
 
     const getTest = () => {
       return selectedProf && qtyPeople === 0
-        ? (<button
+        ? (
+        <button
           onClick={clearFilter}
           className=" d-block btn btn-secondary mt-2 ms-3"
         >
           Очистить
-        </button>)
-        : ('')
+        </button>
+          )
+        : (
+            ''
+          )
     }
 
     return (
       <>
-        {
+        { <>
+          <SearchField
+            onSearch={handleSearch}
+          />
           <SearchStatus
             onClassName={getHeadingClasses}
             onHeading={getHeading}
           />
+        </>
         }
         {getTest()}
         {qtyPeople > 0 && (
@@ -149,6 +174,7 @@ const UsersList = () => {
             )}
 
             <div className="d-flex flex-column">
+
               <UsersTable
                 users={userCrop}
                 onUserChange={handleUserChange}
