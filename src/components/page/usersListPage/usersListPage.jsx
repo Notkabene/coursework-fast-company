@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import SearchStatus from './ui/searchStatus'
-import Pagination from './common/pagination'
-import { paginate } from '../utils/paginate'
-import api from '../api'
-import GroupList from './common/groupList'
-import UsersTable from './usersTable'
-import Loader from '../utils/loader'
-import SearchField from './common/form/searchField'
+import SearchStatus from '../../ui/searchStatus'
+import Pagination from '../../common/pagination'
+import { paginate } from '../../../utils/paginate'
+import api from '../../../api'
+import GroupList from '../../common/groupList'
+import UsersTable from '../../ui/usersTable'
+import Loader from '../../../utils/loader'
+import SearchField from '../../common/form/searchField'
 import _ from 'lodash'
 
-const UsersList = () => {
+const UsersListPage = () => {
   const pageSize = 4
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedProf, setSelectedProf] = useState()
@@ -58,18 +58,18 @@ const UsersList = () => {
   }
 
   if (users) {
-    const usersList = Object.values(users)
-    let filteredUsers = usersList
+    const usersListPage = Object.values(users)
+    let filteredUsers = usersListPage
 
     if (selectedProf) {
       filteredUsers = selectedProf
-        ? usersList.filter((user) => user.profession.name === selectedProf.name)
-        : usersList
+        ? usersListPage.filter((user) => user.profession.name === selectedProf.name)
+        : usersListPage
     } else if (search) {
       filteredUsers = []
       filteredUsers = search
-        ? usersList.filter((user) => user.name.toLowerCase().includes(search))
-        : usersList
+        ? usersListPage.filter((user) => user.name.toLowerCase().includes(search))
+        : usersListPage
     }
 
     const qtyPeople = filteredUsers.length
@@ -88,7 +88,7 @@ const UsersList = () => {
     }
 
     const changeStatus = (bookmark, _id) => {
-      const updateStatus = usersList.map((user) => {
+      const updateStatus = usersListPage.map((user) => {
         if (bookmark === true) {
           if (user._id === _id) {
             user.bookmark = false
@@ -200,8 +200,8 @@ const UsersList = () => {
   return <Loader />
 }
 
-UsersList.propTypes = {
-  usersList: PropTypes.array,
+UsersListPage.propTypes = {
+  usersListPage: PropTypes.array,
   setUsers: PropTypes.func
 }
-export default UsersList
+export default UsersListPage
