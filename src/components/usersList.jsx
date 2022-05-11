@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import SearchStatus from './searchStatus'
-import Pagination from './pagination'
+import SearchStatus from './ui/searchStatus'
+import Pagination from './common/pagination'
 import { paginate } from '../utils/paginate'
 import api from '../api'
-import GroupList from './groupList'
+import GroupList from './common/groupList'
 import UsersTable from './usersTable'
 import Loader from '../utils/loader'
-import SearchField from './searchField'
+import SearchField from './common/form/searchField'
 import _ from 'lodash'
 
 const UsersList = () => {

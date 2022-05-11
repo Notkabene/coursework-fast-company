@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import api from '../api'
 import Loader from '../utils/loader'
-import QualitiesList from '../components/qualitiesList'
+import QualitiesList from '../components/ui/qualities/qualitiesList'
 import { Link } from 'react-router-dom'
 
 const UserInfo = ({ id }) => {
