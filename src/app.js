@@ -12,7 +12,7 @@ const App = () => {
     <Switch>
       <Route path='/users' exact component={Users}/>
       <Route path='/users/:userId?' component={Users}/>
-      <Route path='/login' component={ Login } />
+      <Route path='/login/:type?' component={ Login } />
       <Route path='/' exact component={ Main } />
       <Route path="/404" component={NotFound} />
       <Redirect to='/404' />

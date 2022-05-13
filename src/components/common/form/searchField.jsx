@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-const SearchField = ({ onSearch }) => {
+const SearchField = ({ onSearch, value }) => {
   const handleChange = ({ target }) => {
     onSearch(target.value)
   }
@@ -12,13 +12,15 @@ const SearchField = ({ onSearch }) => {
       type="text"
       placeholder='Поиск'
       onChange={handleChange}
+      value={value}
     />
 
   )
 }
 
 SearchField.propTypes = {
-  onSearch: PropTypes.func
+  onSearch: PropTypes.func,
+  value: PropTypes.string
 }
 
 export default SearchField

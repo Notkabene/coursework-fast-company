@@ -14,11 +14,10 @@ const UsersListPage = () => {
   const pageSize = 4
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedProf, setSelectedProf] = useState()
-  const [search, setSearch] = useState()
+  const [search, setSearch] = useState('')
   const [professions, setProfession] = useState()
   const [sortBy, setSortBy] = useState({ iter: 'name', order: 'asc' })
   const [users, setUsers] = useState()
-  // const [value, setValue] = useState()
 
   useEffect(() => {
     api.users.fetchAll().then((data) => setUsers(data))
@@ -38,7 +37,9 @@ const UsersListPage = () => {
   }, [search])
 
   const handleProfessionSelect = (item) => {
+    console.log(search)
     setSelectedProf(item)
+    if (search !== '') setSearch('')
   }
 
   const handleSearch = (item) => {
@@ -147,6 +148,7 @@ const UsersListPage = () => {
         { <>
           <SearchField
             onSearch={handleSearch}
+            value={search}
           />
           <SearchStatus
             onClassName={getHeadingClasses}
