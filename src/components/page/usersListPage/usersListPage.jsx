@@ -29,7 +29,7 @@ const UsersListPage = () => {
 
   useEffect(() => {
     setCurrentPage(1)
-    setSearch()
+    setSearch('')
   }, [selectedProf])
 
   useEffect(() => {
@@ -37,9 +37,7 @@ const UsersListPage = () => {
   }, [search])
 
   const handleProfessionSelect = (item) => {
-    console.log(search)
     setSelectedProf(item)
-    if (search !== '') setSearch('')
   }
 
   const handleSearch = (item) => {
