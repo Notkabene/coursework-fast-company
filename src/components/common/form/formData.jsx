@@ -7,8 +7,11 @@ import SelectField from './selectField'
 import RadioField from './radioField'
 import MultiSelectField from './multiSelectField'
 import CheckboxField from './checkboxField'
+import { useHistory } from 'react-router-dom'
 
 const FormData = ({ nameForm, nameButton, userId, buttonLinkTo }) => {
+  const history = useHistory()
+
   const [data, setData] = useState({
     email: '',
     name: '',
@@ -152,6 +155,7 @@ const FormData = ({ nameForm, nameButton, userId, buttonLinkTo }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    history.push(buttonLinkTo)
     const isValid = validate()
     if (!isValid) return
     const { profession, qualities } = data
