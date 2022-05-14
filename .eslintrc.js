@@ -13,6 +13,7 @@ module.exports = {
   },
   plugins: ['react'],
   rules: {
-    'multiline-ternary': ['off']
+    'multiline-ternary': ['off'],
+    quotes: [2, 'single', { allowTemplateLiterals: true }]
   }
 }

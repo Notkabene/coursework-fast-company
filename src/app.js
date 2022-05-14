@@ -5,12 +5,14 @@ import NotFound from './layouts/notFound'
 import Main from './layouts/main'
 import Login from './layouts/login'
 import Users from './layouts/users'
+import UserEdit from './layouts/userEdit'
 
 const App = () => {
   return <>
     <NavBar />
     <Switch>
       <Route path='/users' exact component={Users}/>
+      <Route path='/users/:userId?/edit'><UserEdit/></Route>
       <Route path='/users/:userId?' component={Users}/>
       <Route path='/login/:type?' component={ Login } />
       <Route path='/' exact component={ Main } />

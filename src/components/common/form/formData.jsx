@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react'
-import TextField from '../common/form/textField'
-import { validator } from '../../utils/validator'
-import api from '../../api'
-import SelectField from '../common/form/selectField'
-import RadioField from '../common/form/radioField'
-import MultiSelectField from '../common/form/multiSelectField'
-import CheckboxField from '../common/form/checkboxField'
+import PropTypes from 'prop-types'
+import TextField from './textField'
+import { validator } from '../../../utils/validator'
+import api from '../../../api'
+import SelectField from './selectField'
+import RadioField from './radioField'
+import MultiSelectField from './multiSelectField'
+import CheckboxField from './checkboxField'
 
-const RegisterForm = () => {
+const FormData = ({ nameForm, nameButton, userId, buttonLinkTo }) => {
   const [data, setData] = useState({
     email: '',
+    name: '',
     password: '',
     profession: '',
     sex: 'male',
@@ -20,6 +22,7 @@ const RegisterForm = () => {
   const [errors, setErrors] = useState({})
   const [qualities, setQualities] = useState([])
   const [professions, setProfession] = useState([])
+  const [user, setUser] = useState()
 
   useEffect(() => {
     api.professions.fetchAll().then((data) => {
@@ -29,6 +32,7 @@ const RegisterForm = () => {
       }))
       setProfession(professionsList)
     })
+
     api.qualities.fetchAll().then((data) => {
       const qualitiesList = Object.keys(data).map((optionName) => ({
         label: data[optionName].name,
@@ -37,7 +41,30 @@ const RegisterForm = () => {
       }))
       setQualities(qualitiesList)
     })
+
+    api.users.getById(userId).then((data) => setUser(data))
   }, [])
+
+  useEffect(() => {
+    if (user) {
+      const userPassword = user.password ? user.password : ''
+      const userQualities = Object.keys(user.qualities).map((optionName) => ({
+        label: user.qualities[optionName].name,
+        value: user.qualities[optionName]._id,
+        color: user.qualities[optionName].color
+      }))
+
+      setData({
+        email: `${user.email}`,
+        name: `${user.name}`,
+        password: `${userPassword}`,
+        profession: `${user.profession._id}`,
+        sex: `${user.sex}`,
+        qualities: userQualities,
+        licence: true
+      })
+    }
+  }, [user])
 
   const handleChange = (target) => {
     setData((prevState) => ({
@@ -53,6 +80,11 @@ const RegisterForm = () => {
       },
       isEmail: {
         message: 'Email введен не корректно'
+      }
+    },
+    name: {
+      isRequired: {
+        message: 'Имя обязательно для заполнения'
       }
     },
     password: {
@@ -123,7 +155,7 @@ const RegisterForm = () => {
     const isValid = validate()
     if (!isValid) return
     const { profession, qualities } = data
-    console.log({
+    api.users.update(userId, {
       ...data,
       profession: getProfessionById(profession),
       qualities: getQualities(qualities)
@@ -132,8 +164,16 @@ const RegisterForm = () => {
 
   return (
     <>
-      <h3 className="mb-4">Register</h3>
+      <h3 className="mb-4">{nameForm}</h3>
       <form onSubmit={handleSubmit}>
+        <TextField
+          label="Имя"
+          name="name"
+          value={data.name}
+          onChange={handleChange}
+          error={errors.name}
+        />
+
         <TextField
           label="Email"
           name="email"
@@ -142,14 +182,18 @@ const RegisterForm = () => {
           error={errors.email}
         />
 
-        <TextField
-          label="Пароль"
-          type="password"
-          name="password"
-          value={data.password}
-          onChange={handleChange}
-          error={errors.password}
-        />
+        {user ? (
+          ''
+        ) : (
+          <TextField
+            label="Пароль"
+            type="password"
+            name="password"
+            value={data.password}
+            onChange={handleChange}
+            error={errors.password}
+          />
+        )}
 
         <SelectField
           label="Выберите Вашу профессию"
@@ -174,6 +218,7 @@ const RegisterForm = () => {
         />
 
         <MultiSelectField
+          value={data.qualities}
           label="Выберите Ваши качества"
           onChange={handleChange}
           options={qualities}
@@ -189,17 +234,24 @@ const RegisterForm = () => {
         >
           Подтвердить <a>лицензионное соглашение</a>
         </CheckboxField>
-
         <button
           className="btn btn-secondary w-100 mx-auto"
           disabled={!isValid}
           type="submit"
+          // onClick={goLinkTo}
         >
-          Register
+          {nameButton}
         </button>
       </form>
     </>
   )
 }
 
-export default RegisterForm
+export default FormData
+
+FormData.propTypes = {
+  nameForm: PropTypes.string,
+  nameButton: PropTypes.string,
+  buttonLinkTo: PropTypes.string,
+  userId: PropTypes.string
+}
