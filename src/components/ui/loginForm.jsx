@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import TextField from '../common/form/textField'
 import { validator } from '../../utils/validator'
+import CheckboxField from '../common/form/checkboxField'
 
 const LoginForm = () => {
-  const [data, setData] = useState({ email: '', password: '' })
+  const [data, setData] = useState({ email: '', password: '', stayOn: false })
 
   const [errors, setErrors] = useState({})
 
-  const handleChange = ({ target }) => {
+  const handleChange = (target) => {
     setData((prevState) => ({
       ...prevState,
       [target.name]: target.value
@@ -60,39 +61,42 @@ const LoginForm = () => {
   }
 
   return (
-    <div className="container mt-5">
-      <div className="row">
-        <div className="col-md-6 offset-md-3 shadow p-4">
-          <h3 className="mb-4">Login</h3>
+    <>
+      <h3 className="mb-4">Login</h3>
+      <form onSubmit={handleSubmit}>
+        <TextField
+          label="Email"
+          name="email"
+          value={data.email}
+          onChange={handleChange}
+          error={errors.email}
+        />
+        <TextField
+          label="Пароль"
+          type="password"
+          name="password"
+          value={data.password}
+          onChange={handleChange}
+          error={errors.password}
+        />
 
-          <form onSubmit={handleSubmit}>
-            <TextField
-              label="Email"
-              name="email"
-              value={data.email}
-              onChange={handleChange}
-              error={errors.email}
-            />
-            <TextField
-              label="Пароль"
-              type="password"
-              name="password"
-              value={data.password}
-              onChange={handleChange}
-              error={errors.password}
-            />
+        <CheckboxField
+          value={data.stayOn}
+          onChange={handleChange}
+          name="stayOn"
+        >
+          Запомнить меня
+        </CheckboxField>
 
-            <button
-              className="btn btn-secondary w-100 mx-auto"
-              disabled={!isValid}
-              type="submit"
-            >
-              Submit
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
+        <button
+          className="btn btn-secondary w-100 mx-auto"
+          disabled={!isValid}
+          type="submit"
+        >
+          Submit
+        </button>
+      </form>
+    </>
   )
 }
 

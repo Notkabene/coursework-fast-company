@@ -1,9 +1,9 @@
 // import React from 'react'
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import api from '../api'
-import Loader from '../utils/loader'
-import QualitiesList from '../components/ui/qualities/qualitiesList'
+import api from '../../../api'
+import Loader from '../../../utils/loader'
+import QualitiesList from '../../ui/qualities/qualitiesList'
 import { Link } from 'react-router-dom'
 
 const UserInfo = ({ id }) => {
@@ -33,7 +33,7 @@ const UserInfo = ({ id }) => {
         <span className='me-2 fw-bold'>Рейтинг</span>
         <span className='link-primary'>{user.rate}</span>
       </div>
-      <Link className='btn btn-outline-success' to='/users'>Все пользователи</Link>
+      <Link className='btn btn-outline-success' to={`/users/${user._id}/edit`}>Изменить данные</Link>
     </div>
   }
   return <Loader/>
