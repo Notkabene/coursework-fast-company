@@ -186,18 +186,14 @@ const FormData = ({ nameForm, nameButton, userId, buttonLinkTo }) => {
           error={errors.email}
         />
 
-        {user ? (
-          ''
-        ) : (
-          <TextField
-            label="Пароль"
-            type="password"
-            name="password"
-            value={data.password}
-            onChange={handleChange}
-            error={errors.password}
-          />
-        )}
+        <TextField
+          label="Пароль"
+          type="password"
+          name="password"
+          value={data.password}
+          onChange={handleChange}
+          error={errors.password}
+        />
 
         <SelectField
           label="Выберите Вашу профессию"
@@ -242,7 +238,6 @@ const FormData = ({ nameForm, nameButton, userId, buttonLinkTo }) => {
           className="btn btn-secondary w-100 mx-auto"
           disabled={!isValid}
           type="submit"
-          // onClick={goLinkTo}
         >
           {nameButton}
         </button>
