@@ -5,12 +5,9 @@ import PropTypes from "prop-types";
 const Profession = ({ id }) => {
     const { isLoading, getProfession } = useProfessions();
     const prof = getProfession(id);
-
     if (!isLoading) {
         return <p>{prof.name}</p>;
-    } else {
-        return "Loading";
-    }
+    } else return "Loading...";
 };
 
 Profession.propTypes = {
