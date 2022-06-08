@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import PropTypes from "prop-types";
 import qualityService from "../services/quality.service";
-import { toast } from "react-toastify";
 
 const QualitiesContext = React.createContext();
 
@@ -10,34 +10,30 @@ export const useQualities = () => {
 };
 
 export const QualitiesProvider = ({ children }) => {
-    const [qualities, setQualities] = useState("");
+    const [qualities, setQualities] = useState([]);
     const [error, setError] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setLoading] = useState(true);
 
     useEffect(() => {
         const getQualities = async () => {
             try {
-                const { content } = await qualityService.get();
-                console.log("content", content);
+                const { content } = await qualityService.fetchAll();
                 setQualities(content);
-                setIsLoading(false);
+                setLoading(false);
             } catch (error) {
                 errorCatcher(error);
             }
         };
         getQualities();
     }, []);
-
     const getQuality = (id) => {
         return qualities.find((q) => q._id === id);
-        // return qualities;
     };
 
     function errorCatcher(error) {
         const { message } = error.response.data;
         setError(message);
     }
-
     useEffect(() => {
         if (error !== null) {
             toast(error);
@@ -48,10 +44,12 @@ export const QualitiesProvider = ({ children }) => {
     return (
         <QualitiesContext.Provider
             value={{
-                getQuality
+                qualities,
+                getQuality,
+                isLoading
             }}
         >
-            {!isLoading ? children : <h1>Loading</h1>}
+            {children}
         </QualitiesContext.Provider>
     );
 };

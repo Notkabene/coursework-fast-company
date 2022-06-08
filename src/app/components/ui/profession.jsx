@@ -9,9 +9,7 @@ const Profession = ({ id }) => {
         return <p>{prof.name}</p>;
     } else return "Loading...";
 };
-
 Profession.propTypes = {
     id: PropTypes.string
 };
-
 export default Profession;
