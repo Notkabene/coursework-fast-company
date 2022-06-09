@@ -20,6 +20,7 @@ const AuthProvider = ({ children }) => {
         const url = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${process.env.REACT_APP_FIREBASE_KEY}`;
 
         try {
+          console.log("test");
             const { data } = await httpAuth.post(url, {
                 email,
                 password,
@@ -28,7 +29,6 @@ const AuthProvider = ({ children }) => {
 
             setTokens(data);
             await createUser({ _id: data.localId, email, ...rest });
-            console.log(data);
         } catch (error) {
             errorCatcher(error);
             const { code, message } = error.response.data.error;
@@ -42,6 +42,38 @@ const AuthProvider = ({ children }) => {
             }
         }
     }
+
+    async function signIn({ email, password, ...rest }) {
+        const url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.REACT_APP_FIREBASE_KEY}`;
+
+        try {
+            const { data } = await httpAuth.post(url, {
+                email,
+                password,
+                returnSecureToken: true
+            });
+            setTokens(data);
+        } catch (error) {
+          console.log(error.response.data.error);
+            errorCatcher(error);
+            const { code, message } = error.response.data.error;
+            if (code === 400) {
+                if (message === "EMAIL_NOT_FOUND") {
+                    const errorObject = {
+                        email: "Такая почта не зарегистрирована"
+                    };
+                    throw errorObject;
+                }
+                if (message === "INVALID_PASSWORD") {
+                    const errorObject2 = {
+                        email: "Не верный пароль"
+                    };
+                    throw errorObject2;
+                }
+            }
+        }
+    }
+
     async function createUser(data) {
         try {
             const { content } = userService.create(data);
@@ -55,6 +87,7 @@ const AuthProvider = ({ children }) => {
         const { message } = error.response.data;
         setError(message);
     }
+
     useEffect(() => {
         if (error !== null) {
             toast(error);
@@ -63,7 +96,7 @@ const AuthProvider = ({ children }) => {
     }, [error]);
 
     return (
-        <AuthContext.Provider value={{ signUp, currentUser }}>
+        <AuthContext.Provider value={{ signUp, currentUser, signIn }}>
             {children}
         </AuthContext.Provider>
     );
