@@ -65,10 +65,16 @@ const AuthProvider = ({ children }) => {
                     throw errorObject;
                 }
                 if (message === "INVALID_PASSWORD") {
-                    const errorObject2 = {
-                        email: "Не верный пароль"
+                    const errorObject = {
+                        password: "Не верный пароль"
                     };
-                    throw errorObject2;
+                    throw errorObject;
+                }
+                if (message === "TOO_MANY_ATTEMPTS_TRY_LATER : Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later.") {
+                    const errorObject = {
+                        password: "Ты слишком шустрый"
+                    };
+                    throw errorObject;
                 }
             }
         }
