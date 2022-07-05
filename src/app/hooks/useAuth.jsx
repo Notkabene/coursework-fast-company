@@ -41,6 +41,7 @@ const AuthProvider = ({ children }) => {
         } catch (error) {
             errorCatcher(error);
             const { code, message } = error.response.data.error;
+            console.log(code, message);
             if (code === 400) {
                 switch (message) {
                     case "INVALID_PASSWORD":
@@ -54,17 +55,22 @@ const AuthProvider = ({ children }) => {
             }
         }
     }
-
     function logOut() {
         localStorageService.removeAuthData();
         setUser(null);
         history.push("/");
     }
-
     function randomInt(min, max) {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
-
+    async function updateUserData(data) {
+        try {
+            const { content } = await userService.update(data);
+            setUser(content);
+        } catch (error) {
+            errorCatcher(error);
+        }
+    }
     async function signUp({ email, password, ...rest }) {
         try {
             const { data } = await httpAuth.post(`accounts:signUp`, {
@@ -88,6 +94,7 @@ const AuthProvider = ({ children }) => {
         } catch (error) {
             errorCatcher(error);
             const { code, message } = error.response.data.error;
+            console.log(code, message);
             if (code === 400) {
                 if (message === "EMAIL_EXISTS") {
                     const errorObject = {
@@ -98,30 +105,19 @@ const AuthProvider = ({ children }) => {
             }
         }
     }
-
     async function createUser(data) {
         try {
             const { content } = await userService.create(data);
+            console.log(content);
             setUser(content);
         } catch (error) {
             errorCatcher(error);
         }
     }
-
-    async function updateUser(data) {
-        try {
-            const { content } = await userService.update(data);
-            setUser(content);
-        } catch (error) {
-            errorCatcher(error);
-        }
-    }
-
     function errorCatcher(error) {
         const { message } = error.response.data;
         setError(message);
     }
-
     async function getUserData() {
         try {
             const { content } = await userService.getCurrentUser();
@@ -132,7 +128,6 @@ const AuthProvider = ({ children }) => {
             setLoading(false);
         }
     }
-
     useEffect(() => {
         if (localStorageService.getAccessToken()) {
             getUserData();
@@ -140,7 +135,6 @@ const AuthProvider = ({ children }) => {
             setLoading(false);
         }
     }, []);
-
     useEffect(() => {
         if (error !== null) {
             toast(error);
@@ -149,7 +143,7 @@ const AuthProvider = ({ children }) => {
     }, [error]);
     return (
         <AuthContext.Provider
-            value={{ signUp, logIn, currentUser, updateUser, logOut }}
+            value={{ signUp, logIn, currentUser, logOut, updateUserData }}
         >
             {!isLoading ? children : "Loading..."}
         </AuthContext.Provider>
